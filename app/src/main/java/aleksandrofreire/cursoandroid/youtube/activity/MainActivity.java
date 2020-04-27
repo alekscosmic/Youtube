@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Inicializar componentes
         recyclerVideos = findViewById(R.id.recyclerVideos);
-        searchView = findViewById(R.id.serchView);
+        searchView = findViewById(R.id.searchView);
 
         //Configurações iniciais
         retrofit = RetrofitConfig.getRetrofit();
@@ -65,13 +65,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar( toolbar );
 
         //Recupera Vídeos
-        recuperarVideos();
+        recuperarVideos("");
 
         //Configura métodos para SearchView
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                recuperarVideos(query);
+                return true;
             }
 
             @Override
@@ -88,19 +89,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSearchViewClosed() {
-
+                recuperarVideos("");
             }
         });
 
     }
 
-    private void recuperarVideos(){
+    private void recuperarVideos(String pesquisa){
+        String q = pesquisa.replaceAll(" ","+");//replaceAll vai substitui o ""vazio para "+"
 
         YoutubeService youtubeService = retrofit.create(YoutubeService.class);
 
         youtubeService.recuperarVideos(
             "snippet","date","20",
-                YoutubeConfig.CHAVE_YOUTUBE_API,YoutubeConfig.CANAL_ID
+                YoutubeConfig.CHAVE_YOUTUBE_API,YoutubeConfig.CANAL_ID, q
 
         ).enqueue(new Callback<Resultado>() {
             @Override
