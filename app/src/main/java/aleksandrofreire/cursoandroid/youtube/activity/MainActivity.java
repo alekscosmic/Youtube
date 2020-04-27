@@ -5,11 +5,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -21,6 +24,7 @@ import aleksandrofreire.cursoandroid.youtube.adapter.AdapterVideo;
 import aleksandrofreire.cursoandroid.youtube.api.YoutubeService;
 import aleksandrofreire.cursoandroid.youtube.helper.RetrofitConfig;
 import aleksandrofreire.cursoandroid.youtube.helper.YoutubeConfig;
+import aleksandrofreire.cursoandroid.youtube.listener.RecyclerItemClickListener;
 import aleksandrofreire.cursoandroid.youtube.model.Item;
 import aleksandrofreire.cursoandroid.youtube.model.Resultado;
 import aleksandrofreire.cursoandroid.youtube.model.Video;
@@ -127,6 +131,36 @@ public class MainActivity extends AppCompatActivity {
         //Configurar o adapter
         recyclerVideos.setAdapter( adapterVideo );
 
+        //Configurar evento de clique
+        recyclerVideos.addOnItemTouchListener(
+                new RecyclerItemClickListener(
+                        this,
+                        recyclerVideos,
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+
+                                Item video = videos.get(position);
+                                String idVideo = video.id.videoId;
+
+                                Intent i = new Intent(MainActivity.this,PlayerActivity.class);
+                                i.putExtra("idVideo", idVideo);
+                                startActivity(i);
+
+                            }
+
+                            @Override
+                            public void onLongItemClick(View view, int position) {
+
+                            }
+
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            }
+                        }
+                )
+        );
     }
 
     @Override
